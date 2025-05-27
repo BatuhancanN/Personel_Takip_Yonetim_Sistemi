@@ -31,7 +31,7 @@
 
 ---
 
-## 📸 Uygulama Görselleri
+## 📸 Tanıtım Görselleri
 
 <table>
   <tr>
