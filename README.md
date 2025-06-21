@@ -46,9 +46,27 @@
     <td><img src="img/5.jpg" width="85%"></td>
     <td><img src="img/6.jpg" width="85%"></td>
   </tr>
+  <tr>
+    <td><img src="img/7.jpg" width="85%"></td>
+    <td><img src="img/10.jpg" width="85%"></td>
+  </tr>
+  <tr>
+    <td><img src="img/20.jpg" width="85%"></td>
+    <td><img src="img/30.jpg" width="85%"></td>
+  </tr>
+  <tr>
+    <td><img src="img/40.jpg" width="85%"></td>
+    <td><img src="img/50.jpg" width="85%"></td>
+  </tr>
+  <tr>
+    <td><img src="img/60.jpg" width="85%"></td>
+    <td><img src="img/70.jpg" width="85%"></td>
+  </tr>
+  <tr>
+    <td><img src="img/80.jpg" width="85%"></td>
+    <td><img src="img/90.jpg" width="85%"></td>
+  </tr>
 </table>
-
-<div align="center">
-  <img src="img/7.jpg" width="42%">
+  
 </div>
 
