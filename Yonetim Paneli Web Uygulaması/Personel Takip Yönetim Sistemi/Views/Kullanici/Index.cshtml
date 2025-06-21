@@ -1,0 +1,123 @@
+﻿@model IEnumerable<Personel_Takip_Yönetim_Sistemi.Models.Login>
+@using System.Security.Claims
+
+
+@{
+    ViewData["Title"] = "Kullanıcı Listesi";
+    var currentUserId = int.Parse(User.FindFirst("UserId").Value);
+    var currentUserRole = int.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "0");
+}
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="row justify-content-center mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white shadow rounded-4 h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Personeller</h5>
+                <p class="card-text">Personellerinizi yönetin.</p>
+                <a asp-controller="Personel" asp-action="Index" class="btn btn-light">Git</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="mb-4 text-center">Kullanıcı Listesi</h2>
+
+<div class="text-end mb-3">
+    <a asp-controller="Kullanici" asp-action="Create" class="btn bg-primary">Yeni Kullanıcı Ekle</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Ad</th>
+                <th>Soyad</th>
+                <th>Kullanıcı Adı</th>
+                <th>Yetki</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var kullanici in Model)
+            {
+                <tr>
+                    <td>@kullanici.login_isim.ToUpper()</td>
+                    <td>@kullanici.login_soyisim.ToUpper()</td>
+                    <td>@kullanici.loginame</td>
+                    <td>
+                        @if (kullanici.login_role == 1)
+                        {
+                            @:Personel
+                        }
+                        else if (kullanici.login_role == 2)
+                        {
+                            @:İnsan Kaynakları
+                        }
+                        else if (kullanici.login_role == 3)
+                        {
+                            @:Yönetim
+                        }
+                        else
+                        {
+                            @:Bilinmeyen Rol
+                        }
+                    </td>
+                    <td>
+                        @* Düzenle butonu: Sadece rolü 2 veya 3 olanlar kullanabilir *@
+                        @if ((currentUserId == kullanici.login_id) ||
+                       (currentUserRole == 2 && kullanici.login_role == 1) ||
+                       (currentUserRole == 3))
+                        {
+                            <a asp-action="Edit" asp-route-id="@kullanici.login_id" class="btn btn-sm bg-warning">Düzenle</a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled>Düzenle</button>
+                        }
+
+
+                        @* Sil butonu: Kendi hesabı değilse, sadece üst seviyeyi silebilir *@
+                        @if (currentUserId != kullanici.login_id && currentUserRole > 1 && currentUserRole > kullanici.login_role)
+                        {
+                            <form asp-action="Delete" asp-route-id="@kullanici.login_id" method="post" style="display:inline;" onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                            </form>
+                        }
+                        else if (currentUserId == kullanici.login_id)
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled title="Kendi hesabınızı silemezsiniz">Kendiniz</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled>Sil</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(form) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: 'Bu kullanıcı silinecek!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'İptal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+        return false;
+    }
+</script>

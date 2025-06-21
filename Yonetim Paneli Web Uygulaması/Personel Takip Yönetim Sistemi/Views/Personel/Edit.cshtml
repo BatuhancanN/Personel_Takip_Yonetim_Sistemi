@@ -1,0 +1,46 @@
+﻿@model Personel_Takip_Yönetim_Sistemi.Models.ViewModels.PersonelEditViewModel
+
+@{
+    ViewData["Title"] = "Personel Düzenle";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Personel Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" asp-route-id="@Model.PersonelId" method="post">
+                        <input type="hidden" asp-for="PersonelId" />
+
+                        <div class="mb-3">
+                            <label asp-for="PersonelIsim" class="form-label">İsim</label>
+                            <input asp-for="PersonelIsim" class="form-control" required />
+                            <span asp-validation-for="PersonelIsim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PersonelSoyisim" class="form-label">Soyisim</label>
+                            <input asp-for="PersonelSoyisim" class="form-control" required />
+                            <span asp-validation-for="PersonelSoyisim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PersonelPozisyon" class="form-label">Pozisyon</label>
+                            <input asp-for="PersonelPozisyon" class="form-control" required />
+                            <span asp-validation-for="PersonelPozisyon" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Kaydet</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

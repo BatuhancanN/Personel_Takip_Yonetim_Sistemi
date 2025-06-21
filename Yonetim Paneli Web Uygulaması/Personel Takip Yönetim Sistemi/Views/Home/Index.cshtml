@@ -1,0 +1,153 @@
+﻿@model List<Personel_Takip_Yönetim_Sistemi.Models.Personel>
+@using Microsoft.EntityFrameworkCore;
+
+@{
+    ViewData["Title"] = "Kontrol Paneli";
+}
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="container py-5">
+
+    <div class="row g-4">
+
+        
+
+        <!-- Personel Yönetimi -->
+        <div class="col-md-4">
+            <div class="card bg-danger text-white shadow rounded-4 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Personeller</h5>
+                    <p class="card-text">Sisteme Kayıtlı Personellerinizi Yönetin.</p>
+                    <a asp-controller="Personel" asp-action="Index" class="btn btn-dark">Git</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Hareketler Sayfası -->
+        <div class="col-md-4">
+            <div class="card bg-success text-white shadow rounded-4 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Hareketler</h5>
+                    <p class="card-text">Giriş/çıkış gibi tüm hareketleri inceleyin.</p>
+                    <a asp-controller="Hareket" asp-action="Index" class="btn btn-dark">Git</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Yönetimi -->
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark shadow rounded-4 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Kullanıcılar</h5>
+                    <p class="card-text">Sisteme Kayıtlı Kullanıcıları Yönetin.</p>
+                    <a asp-controller="Kullanici" asp-action="Index" class="btn btn-dark">Git</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4 justify-content-center mt-4">
+    
+
+        <!-- Çalışan Sayısı Kartı -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary shadow rounded-4 h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Aktif Giriş Yapan Çalışan</h5>
+                    <p class="display-4 fw-bold" id="personelCount">@ViewData["AktifGirisYapanSayisi"]</p> <!-- Kişi sayısını dinamik gösterecek alan -->
+                </div>
+            </div>
+        </div>
+
+
+</div>
+
+    <div class="container mt-5">
+        <h4 class="mb-3">Giriş Yapmış Personeller</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>AD</th>
+                        <th>DEPARTMAN</th>
+                    </tr>
+                </thead>
+                <tbody id="personel-body">
+                    @foreach (var personel in Model)
+                    {
+                        <tr>
+                            <td>@personel.PersonelIsim.ToUpper()</td>
+                            <td>@personel.PersonelPozisyon.ToUpper()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        let isFiltered = false;
+
+        // Verileri çekip tabloyu ve kişi sayısını güncelleyen fonksiyon
+        function fetchLatestGirisYapanPersoneller() {
+            if (isFiltered) return; // Filtre aktifse verileri çekme
+
+            $.getJSON("/Home/GetLatestGirisYapanPersoneller", function (data) {
+                console.log(data); // Veriyi kontrol edebiliriz
+                var tbody = $("#personel-body"); // Tabloyu güncelleyeceğiz
+                tbody.empty(); // Tabloyu temizle
+
+                // Kişi sayısını güncelle
+                $("#personelCount").text(data.count);  // Kişi sayısını güncelle
+
+                if (data.personeller.length === 0) {
+                    tbody.append("<tr><td colspan='3' class='text-center'>Burada Kimse Kalmamış :( </td></tr>");
+                    return;
+                }
+
+                // Personelleri tablodaki satırlara ekle
+                data.personeller.forEach(function (personel) {
+                    var row = `
+                        <tr>
+                            <td>${personel.personelAdSoyad}</td>
+                            <td>${personel.personelPozisyon}</td> <!-- Pozisyon -->
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+            });
+        }
+
+        // Sayfa yüklendiğinde başlat
+        fetchLatestGirisYapanPersoneller();
+
+        // 3 saniyede bir veriyi güncelle
+        const intervalId = setInterval(fetchLatestGirisYapanPersoneller, 3000);
+
+        // Filtreleme butonu: Sadece çıkışları göster
+        $("#filterExit").click(function () {
+            isFiltered = true;
+            $("#personel-body tr").each(function () {
+                const durumCell = $(this).find("td:eq(2)");  // Pozisyon hücresini kontrol et
+                if (durumCell.hasClass("cikis")) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // "Tümünü Göster" butonuna tıklanınca filtreyi kaldır
+        $("#showAll").click(function () {
+            isFiltered = false;
+            fetchLatestGirisYapanPersoneller(); // Verileri tekrar yükle
+        });
+
+    </script>
+}
+

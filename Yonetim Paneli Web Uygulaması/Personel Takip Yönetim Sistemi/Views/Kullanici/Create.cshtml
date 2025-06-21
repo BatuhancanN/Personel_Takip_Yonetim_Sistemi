@@ -1,0 +1,65 @@
+﻿@model Personel_Takip_Yönetim_Sistemi.Models.Login
+
+@{
+    ViewData["Title"] = "Yeni Kullanıcı Ekle";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Yeni Kullanıcı Ekle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" asp-controller="Kullanici" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="loginame" class="form-label">Kullanıcı Adı</label>
+                            <input asp-for="loginame" class="form-control" />
+                            <span asp-validation-for="loginame" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="login_isim" class="form-label">İsim</label>
+                            <input asp-for="login_isim" class="form-control" />
+                            <span asp-validation-for="login_isim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="login_soyisim" class="form-label">Soyisim</label>
+                            <input asp-for="login_soyisim" class="form-control" />
+                            <span asp-validation-for="login_soyisim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="login_pass" class="form-label">Şifre</label>
+                            <input asp-for="login_pass" class="form-control" type="password" />
+                            <span asp-validation-for="login_pass" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="login_role" class="form-label">Yetki</label>
+                            <select asp-for="login_role" class="form-select">
+                                <option value="1">Personel</option>
+                                <option value="2">İnsan Kaynakları</option>
+                                <option value="3">Yönetim</option>
+                            </select>
+                            <span asp-validation-for="login_role" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

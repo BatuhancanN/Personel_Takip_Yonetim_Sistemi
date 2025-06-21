@@ -1,0 +1,49 @@
+﻿@model Personel_Takip_Yönetim_Sistemi.Models.Personel
+
+@{
+    ViewData["Title"] = "Yeni Personel Ekle";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Yeni Personel Ekle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" asp-controller="Personel" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="PersonelIsim" class="form-label">İsim</label>
+                            <input asp-for="PersonelIsim" class="form-control" />
+                            <span asp-validation-for="PersonelIsim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PersonelSoyisim" class="form-label">Soyisim</label>
+                            <input asp-for="PersonelSoyisim" class="form-control" />
+                            <span asp-validation-for="PersonelSoyisim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PersonelPozisyon" class="form-label">Pozisyon</label>
+                            <input asp-for="PersonelPozisyon" class="form-control" />
+                            <span asp-validation-for="PersonelPozisyon" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

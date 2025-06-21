@@ -1,0 +1,128 @@
+﻿@model IEnumerable<Personel_Takip_Yönetim_Sistemi.Models.Personel>
+@{
+    ViewData["Title"] = "Personel Listesi";
+}
+
+<style>
+    .search-card {
+        background: transparent;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+</style>
+
+<h2 class="text-center mb-4">Personel Listesi</h2>
+
+<!-- Arama Kutusu -->
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="search-card">
+            <input type="text" id="searchInput" class="form-control" placeholder="İsim Ara...">
+        </div>
+    </div>
+</div>
+
+<div class="text-end mb-3">
+    <a asp-controller="Personel" asp-action="Create" class="btn bg-primary">Yeni Personel Ekle</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Ad</th>
+                <th>Soyad</th>
+                <th>Pozisyon</th>
+                <th>Durum</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody id="personel-body">
+            @foreach (var personel in Model)
+            {
+                <tr>
+                    <td>@personel.PersonelIsim</td>
+                    <td>@personel.PersonelSoyisim</td>
+                    <td>@personel.PersonelPozisyon</td>
+                    <td>@(personel.PersonelDurum ? "Aktif" : "Pasif")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@personel.PersonelId" class="btn btn-sm bg-warning">Düzenle</a>
+                        <button class="btn btn-sm btn-info" onclick="showQRCode(@personel.PersonelId)">QR Kod</button>
+                        <form asp-action="Delete" asp-route-id="@personel.PersonelId" method="post" style="display:inline;" onsubmit="return confirm('Bu personeli silmek istediğinize emin misiniz?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm bg-danger">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- QR Kod Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalLabel">Personel QR Kodu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrCodeImage" src="" alt="QR Kod" class="img-fluid mb-3" />
+                <a id="downloadLink" href="#" class="btn btn-success" download="qrcode.png">QR Kodunu İndir (PNG)</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showQRCode(id) {
+            var imageUrl = '/Personel/QRCode/' + id;
+            document.getElementById("qrCodeImage").src = imageUrl;
+            document.getElementById("downloadLink").href = imageUrl;
+
+            var modal = new bootstrap.Modal(document.getElementById('qrModal'));
+            modal.show();
+        }
+
+        $("#searchInput").on("keyup", function () {
+            var searchText = $(this).val().trim();
+
+            if (searchText === "") {
+                location.reload(); // input boşsa sayfayı yenile
+                return;
+            }
+
+            $.getJSON("/Personel/GetPersonellerByName", { isim: searchText }, function (data) {
+                var tbody = $("#personel-body");
+                tbody.empty();
+
+                if (data.length === 0) {
+                    tbody.append("<tr><td colspan='5' class='text-center'>Eşleşen kayıt bulunamadı</td></tr>");
+                    return;
+                }
+
+                data.forEach(function (p) {
+                    var durum = p.personelDurum ? "Aktif" : "Pasif";
+                    var row = `
+                                <tr>
+                                    <td>${p.personelIsim}</td>
+                                    <td>${p.personelSoyisim}</td>
+                                    <td>${p.personelPozisyon}</td>
+                                    <td>${durum}</td>
+                                    <td>
+                                        <a href="/Personel/Edit/${p.personelId}" class="btn btn-sm bg-warning">Düzenle</a>
+                                        <button class="btn btn-sm btn-info" onclick="showQRCode(${p.personelId})">QR Kod</button>
+                                        <a href="/Personel/Delete/${p.personelId}" class="btn btn-sm bg-danger" onclick="return confirm('Bu personeli silmek istediğinize emin misiniz?');">Sil</a>
+                                    </td>
+                                </tr>
+                            `;
+                    tbody.append(row);
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Personel Takip Yönetim Sistemi.props" />
+</Project>

@@ -1,0 +1,75 @@
+﻿@model Personel_Takip_Yönetim_Sistemi.Models.ViewModels.LoginEditViewModel
+
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Kullanıcı Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" asp-route-id="@Model.login_id" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <input type="hidden" asp-for="login_id" />
+
+                        <div class="mb-3">
+                            <label asp-for="login_isim" class="form-label">İsim</label>
+                            <input asp-for="login_isim" class="form-control" required />
+                            <span asp-validation-for="login_isim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="login_soyisim" class="form-label">Soyisim</label>
+                            <input asp-for="login_soyisim" class="form-control" required />
+                            <span asp-validation-for="login_soyisim" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="loginame" class="form-label">Kullanıcı Adı</label>
+                            <input asp-for="loginame" class="form-control" required />
+                            <span asp-validation-for="loginame" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="login_role" class="form-label">Yetki</label>
+                            <select asp-for="login_role" class="form-select">
+                                @{
+                                    var roller = new Dictionary<int, string>
+                                {
+                                { 1, "Personel" },
+                                { 2, "İnsan Kaynakları" },
+                                { 3, "Yönetim" }
+                                };
+
+                                    foreach (var rol in roller)
+                                    {
+                                        <option value="@rol.Key" selected="@(Model.login_role == rol.Key ? "selected" : null)">
+                                            @rol.Value
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="login_role" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="YeniSifre" class="form-label">Yeni Şifre</label>
+                            <input asp-for="YeniSifre" class="form-control" type="password" data-val="false" />
+                            <span asp-validation-for="YeniSifre" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Düzenle</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
